@@ -27,8 +27,7 @@ Rotary_encoder::Rotary_encoder(uint encoderPhaseA_PIN, uint encoderPhaseB_PIN, b
     this->_lastLSB = 0;
     this->_lastEncoded = 0;
     this->_currVal = 0;
-    this->_lastValueEmitted = 0;
-
+    
     InterruptableControlsArray::setIRQHandler(this->_encoderPhaseA_PIN, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
     InterruptableControlsArray::setIRQHandler(this->_encoderPhaseB_PIN, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
 }
@@ -60,11 +59,11 @@ void Rotary_encoder::setCurrentValue(float newValue){
         calculatedNewValue <= this->_maxVal){
             
             this->_currVal = calculatedNewValue;
-        }
+    }
         
 
-    if (this->_onValueChangeCallback){
-        this->_lastValueEmitted = this->readValue();
+    if (this->_onValueChangeCallback){      
+        this->_lastValueChangeTimestamp = 0; 
         this->_onValueChangeCallback(this->readValue());
     }
 }
@@ -116,10 +115,13 @@ void Rotary_encoder::handleInterruptEvent(uint gpio, uint32_t events){
 
         this->_lastEncoded = encoded; //store this value for next time
 
-        // has value changed?
-        if (this->_onValueChangeCallback && this->_lastValueEmitted != floor(this->_currVal / 4) * this->_step){
-            this->_lastValueEmitted = floor(this->_currVal / 4) * this->_step;
-            this->_onValueChangeCallback(this->readValue());
-        }
+        this->_lastValueChangeTimestamp = time_us_64();        
+    }
+}
+
+void Rotary_encoder::update(){
+    if (this->_lastValueChangeTimestamp && time_us_64() - this->_lastValueChangeTimestamp >= this->_debounceTime && this->_onValueChangeCallback){
+        this->_lastValueChangeTimestamp = 0;
+        this->_onValueChangeCallback(this->readValue());
     }
 }

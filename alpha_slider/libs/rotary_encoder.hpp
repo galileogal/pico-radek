@@ -22,8 +22,12 @@ class Rotary_encoder : Interruptable_Control {
 
         uint _lastMSB, _lastLSB, _lastEncoded;
 
-        float _minVal, _maxVal, _currVal, _lastValueEmitted, _step = 1;
+        float _minVal, _maxVal, _currVal, _step = 1;
         enmEncoderBoundaryReachedAction _outOfRangeAction = stop;
+
+        u_int64_t _lastValueChangeTimestamp = 0;
+        u_int64_t _debounceTime = 5000;    // in microseconds
+
       
         onValueChangeCallbackType _onValueChangeCallback = NULL;
 
@@ -38,11 +42,9 @@ class Rotary_encoder : Interruptable_Control {
         
         float readValue();
 
-        
-
         // derived from Interruptable_Control
         void handleInterruptEvent(uint gpio, uint32_t events);
-        
+        void update();        
 };
 
 

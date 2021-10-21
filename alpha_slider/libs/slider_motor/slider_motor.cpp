@@ -303,9 +303,6 @@ void Slider_motor::turnBack(){
     this->_turnback_start_setting_index = this->_current_setting_index;
     this->_turnback_final_setting_index = this->getSettingIndex(speed, newDirection);
     
-    
-    printf("start index: %d, end index: %d\n", this->_turnback_start_setting_index, this->_turnback_final_setting_index);
-
     // remember when the whole operation started 
     this->_turnback_time_started = time_us_64();
     
@@ -335,33 +332,33 @@ void Slider_motor::handleInterruptEvent(uint gpio, uint32_t events){
     u_int8_t encoded = (newValue << 1) | directionEncoded;
     u_int8_t sum = ((this->_lastEncoded << 2) | encoded) & 0b00111111; // remember up to 3 state changes
 
-    printf("SUM: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(sum));
-    printf("\n");
+    //printf("SUM: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(sum));
+    //printf("\n");
 
     if (sum == 0b00000010){
-        printf("poczatek zawracania prawego\n");
+        //printf("poczatek zawracania prawego\n");
         this->_lastEncoded = sum;
         this->turnBack();        
     }
     else if (sum == 0b00000011){
-        printf("poczatek zawracania lewego\n");
+        //printf("poczatek zawracania lewego\n");
         this->_lastEncoded = sum;
         this->turnBack();
     }
     else if (sum == 0b00001001){
-        printf("koniec zawracania prawego (bez wyjazdu ze znacznika)\n");
+        //printf("koniec zawracania prawego (bez wyjazdu ze znacznika)\n");
         this->_lastEncoded = 0;
     }
     else if (sum == 0b00001101 && this->_lastEncoded == 0b00100011){
-        printf("koniec zawracania prawego\n");
+        //printf("koniec zawracania prawego\n");
         this->_lastEncoded = 0;
     }
     else if (sum == 0b00001100){
-        printf("koniec zawracania lewego (bez wyjazdu ze znacznika)\n");
+        //printf("koniec zawracania lewego (bez wyjazdu ze znacznika)\n");
         this->_lastEncoded = 0;
     }
     else if (sum == 0b00011000){
-        printf("koniec zawracania lewego\n");
+        //printf("koniec zawracania lewego\n");
         this->_lastEncoded = 0;
     }
     else {

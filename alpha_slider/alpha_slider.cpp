@@ -180,7 +180,7 @@ void updateMotorSetting(strctControllerSetting_t newSetting){
 }
 
 void onRotaryEncoderValueChange(float newValue){
-    if (rotaryValue != newValue){            
+    if (rotaryValue != newValue){           
         rotaryValue = newValue;    
         motorController->setCurrentSettingIndex(rotaryValue);
         currentMotorSetting = motorController->getCurrentSetting();
@@ -397,6 +397,7 @@ int main() {
         sliderControlButton->update();
         buttonLED->update();
         motorController->update();
+        rotEncoder1->update();
                 
 
         switch (displayMenuPos){
@@ -485,7 +486,7 @@ int main() {
         
         //printf("%d\n", time_us_64());
         
-        sleep_ms(10);
+        sleep_ms(1);
     }
 
     return 0;

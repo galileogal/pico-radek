@@ -68,8 +68,6 @@ void Button_With_Callback::update(){
 
     // if the key is pressed and onHeld event handler is set - check if it should be called
     if (this->_state && this->_buttonHeldDownCallback && !this->_buttonHeldDownEventTriggered && time_us_64() - this->_lastButtonPresseduSTimestamp >= this->_minimumTimeUSPressedForHoldEvent){
-        printf("button time: %llu\n", time_us_64());
-
         this->_buttonHeldDownEventTriggered = true;
         this->_buttonHeldDownCallback(this->_button_PIN);
         this->_buttonHeldFlag = true;
